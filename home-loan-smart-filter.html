@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Home Loan Eligibility Quick Check</title>
+
+<style>
+body{
+margin:0;
+font-family:Segoe UI,Arial;
+background:linear-gradient(135deg,#6a11cb,#2575fc);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+background:white;
+width:430px;
+padding:30px;
+border-radius:14px;
+box-shadow:0 15px 40px rgba(0,0,0,0.25);
+}
+
+h2{text-align:center;margin-bottom:10px;}
+
+.progress{
+height:6px;
+background:#eee;
+border-radius:10px;
+margin:15px 0 25px;
+overflow:hidden;
+}
+
+.progress-bar{
+height:100%;
+width:10%;
+background:#6a11cb;
+transition:.3s;
+}
+
+.step{display:none;}
+.step.active{display:block;}
+
+input,select{
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:6px;
+border:1px solid #ddd;
+font-size:14px;
+}
+
+.button-group{
+display:flex;
+gap:10px;
+margin-top:12px;
+}
+
+button{
+flex:1;
+padding:12px;
+border:none;
+border-radius:6px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.next{background:linear-gradient(135deg,#6a11cb,#2575fc);color:white;}
+.back{background:#ddd;}
+
+.thankyou{
+text-align:center;
+padding:25px;
+}
+.thankyou h3{color:#2ecc71;}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🏠 Home Loan Quick Eligibility</h2>
+
+<div class="progress"><div class="progress-bar" id="bar"></div></div>
+
+<!-- STEP 1 -->
+<div class="step active" id="s1">
+<select id="loanType" onchange="btToggle()">
+<option value="">Loan Type</option>
+<option>Fresh Home Loan</option>
+<option>Balance Transfer</option>
+<option>BT + Top Up</option>
+</select>
+
+<div id="btBox" style="display:none">
+<input id="outstanding" placeholder="Existing Outstanding Amount">
+<input id="tenure" placeholder="Remaining Tenure (Years)">
+<input id="roi" placeholder="Current ROI (%)">
+<input id="lender" placeholder="Current Lender Name">
+</div>
+
+<div class="button-group">
+<button class="next" onclick="go(2)">Next</button>
+</div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step" id="s2">
+<select id="propertyType" onchange="stageToggle()">
+<option value="">Property Type</option>
+<option>Ready to Move</option>
+<option>Under Construction</option>
+<option>Resale</option>
+</select>
+
+<select id="stage" style="display:none">
+<option value="">Completion Stage</option>
+<option><50%</option>
+<option>50–75%</option>
+<option>75%+</option>
+<option>Possession in 6 months</option>
+</select>
+
+<div class="button-group">
+<button class="back" onclick="go(1)">Back</button>
+<button class="next" onclick="go(3)">Next</button>
+</div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step" id="s3">
+<input id="name" placeholder="Full Name">
+<input id="age" placeholder="Age">
+<input id="mobile" placeholder="Mobile Number">
+<input id="city" placeholder="City">
+
+<select id="residence">
+<option value="">Residence Type</option>
+<option>Owned</option>
+<option>Rented</option>
+<option>Parental</option>
+</select>
+
+<div class="button-group">
+<button class="back" onclick="go(2)">Back</button>
+<button class="next" onclick="go(4)">Next</button>
+</div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step" id="s4">
+<select id="employment">
+<option value="">Employment Type</option>
+<option>Salaried</option>
+<option>Self Employed</option>
+</select>
+
+<div class="button-group">
+<button class="back" onclick="go(3)">Back</button>
+<button class="next" onclick="empRoute()">Next</button>
+</div>
+</div>
+
+<!-- SALARIED -->
+<div class="step" id="salaryBox">
+<input id="salary" placeholder="Monthly Salary (₹)">
+<div class="button-group">
+<button class="back" onclick="go(4)">Back</button>
+<button class="next" onclick="go(6)">Next</button>
+</div>
+</div>
+
+<!-- BUSINESS -->
+<div class="step" id="businessBox">
+<input id="itr" placeholder="Annual ITR Income (₹)">
+<input id="vintage" placeholder="Business Vintage (Years)">
+<div class="button-group">
+<button class="back" onclick="go(4)">Back</button>
+<button class="next" onclick="go(6)">Next</button>
+</div>
+</div>
+
+<!-- STEP 6 -->
+<div class="step" id="s6">
+<input id="emi" placeholder="Existing EMI (₹)">
+
+<select id="cibil">
+<option value="">Approx CIBIL</option>
+<option>750+</option>
+<option>700–749</option>
+<option>650–699</option>
+<option>Below 650</option>
+<option>Not Sure</option>
+</select>
+
+<input id="loanAmount" placeholder="Loan Amount Required (₹)">
+
+<div class="button-group">
+<button class="back" onclick="go(4)">Back</button>
+<button class="next" onclick="submitLead()">Submit</button>
+</div>
+</div>
+
+<!-- THANK YOU -->
+<div class="step" id="thankyou">
+<div class="thankyou">
+<h3>✅ Thank You!</h3>
+<p>Your details have been received successfully.</p>
+<p>Our loan expert will contact you shortly.</p>
+</div>
+</div>
+
+</div>
+
+<script>
+
+function go(n){
+document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+document.getElementById('s'+n)?.classList.add('active');
+salaryBox.classList.remove('active');
+businessBox.classList.remove('active');
+document.getElementById("bar").style.width=(n*16)+"%";
+}
+
+function empRoute(){
+document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+if(employment.value=="Salaried") salaryBox.classList.add('active');
+else if(employment.value=="Self Employed") businessBox.classList.add('active');
+else return alert("Select employment type");
+document.getElementById("bar").style.width="80%";
+}
+
+function btToggle(){
+btBox.style.display=loanType.value.includes("Transfer")?"block":"none";
+}
+
+function stageToggle(){
+stage.style.display=propertyType.value=="Under Construction"?"block":"none";
+}
+
+function submitLead(){
+
+fetch("https://script.google.com/macros/s/AKfycbxKtR9uPAe4er7s4nhj0wXgzAJnV8foPL8C-JbONlHxUlWSGSgfz5BBJqAQGFL_5PtMmQ/exec",{
+ method:"POST",
+ body:JSON.stringify({
+  loanType: loanType.value,
+  outstanding: outstanding.value,
+  tenure: tenure.value,
+  roi: roi.value,
+  lender: lender.value,
+  propertyType: propertyType.value,
+  stage: stage.value,
+  name: name.value,
+  age: age.value,
+  mobile: mobile.value,
+  city: city.value,
+  residence: residence.value,
+  employment: employment.value,
+  salary: salary.value,
+  itr: itr.value,
+  vintage: vintage.value,
+  emi: emi.value,
+  cibil: cibil.value,
+  loanAmount: loanAmount.value
+ })
+})
+.then(()=>{
+
+document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+document.getElementById("thankyou").classList.add("active");
+document.getElementById("bar").style.width="100%";
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
