@@ -199,7 +199,25 @@ padding:25px;
 <input id="loanAmount" placeholder="Loan Amount Required (₹)">
 
 <div class="button-group">
-<button class="back" onclick="go(4)">Back</button>
+<button class="back" onclick="go(4)">Back</button><hr>
+
+<h4>Co-Applicant Details (Mandatory)</h4>
+
+<label>Co Applicant Name <span style="color:red">*</span></label>
+<input id="coName">
+
+<label>Co Applicant Age <span style="color:red">*</span></label>
+<input id="coAge" type="number">
+
+<label>Co Applicant Employment <span style="color:red">*</span></label>
+<select id="coEmployment">
+<option value="">Select</option>
+<option>Salaried</option>
+<option>Self Employed</option>
+</select>
+
+<label>Co Applicant Income (₹) <span style="color:red">*</span></label>
+<input id="coIncome" type="number">
 <button class="next" onclick="submitLead()">Submit</button>
 </div>
 </div>
@@ -242,7 +260,10 @@ stage.style.display=propertyType.value=="Under Construction"?"block":"none";
 }
 
 function submitLead(){
-
+if(coName.value=="" || coAge.value=="" || coEmployment.value=="" || coIncome.value==""){
+alert("Please fill all Co-Applicant mandatory fields.");
+return;
+}
 fetch("https://script.google.com/macros/s/AKfycbxKtR9uPAe4er7s4nhj0wXgzAJnV8foPL8C-JbONlHxUlWSGSgfz5BBJqAQGFL_5PtMmQ/exec",{
  method:"POST",
  body:JSON.stringify({
@@ -281,3 +302,4 @@ document.getElementById("bar").style.width="100%";
 
 </body>
 </html>
+
