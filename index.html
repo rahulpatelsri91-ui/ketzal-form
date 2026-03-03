@@ -174,60 +174,40 @@ cursor:pointer;
 <script>
 
 function nextStep(n){
+
 if(n==1){
-if(!loanType.value||!name.value||!mobile.value||!age.value){
+
+var loanTypeVal = document.getElementById("loanType").value;
+var nameVal = document.getElementById("name").value;
+var mobileVal = document.getElementById("mobile").value;
+var ageVal = document.getElementById("age").value;
+
+if(loanTypeVal=="" || nameVal=="" || mobileVal=="" || ageVal==""){
 alert("Please fill all mandatory fields.");
 return;
 }
 }
+
 if(n==2){
-if(!employment.value||!income.value||!emi.value||!cibil.value){
+
+var employmentVal = document.getElementById("employment").value;
+var incomeVal = document.getElementById("income").value;
+var emiVal = document.getElementById("emi").value;
+var cibilVal = document.getElementById("cibil").value;
+
+if(employmentVal=="" || incomeVal=="" || emiVal=="" || cibilVal==""){
 alert("Please fill all mandatory fields.");
 return;
 }
 }
+
 document.getElementById("s"+n).classList.remove("active");
 document.getElementById("s"+(n+1)).classList.add("active");
 }
 
-function prevStep(n){
-document.getElementById("s"+n).classList.remove("active");
-document.getElementById("s"+(n-1)).classList.add("active");
-}
-
-function submitLead(){
-
-if(!loanAmount.value||!coName.value||!coAge.value||!coEmployment.value||!coIncome.value){
-alert("Please fill all mandatory fields.");
-return;
-}
-
-fetch("PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE",{
-method:"POST",
-body:JSON.stringify({
-loanType:loanType.value,
-name:name.value,
-mobile:mobile.value,
-age:age.value,
-employment:employment.value,
-income:income.value,
-emi:emi.value,
-cibil:cibil.value,
-loanAmount:loanAmount.value,
-coName:coName.value,
-coAge:coAge.value,
-coEmployment:coEmployment.value,
-coIncome:coIncome.value
-})
-})
-.then(()=>{
-document.getElementById("s3").classList.remove("active");
-document.getElementById("thankyou").classList.add("active");
-});
-
-}
 
 </script>
 
 </body>
 </html>
+
