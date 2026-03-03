@@ -8,7 +8,7 @@
 body{
 margin:0;
 font-family:Segoe UI,Arial;
-background:linear-gradient(135deg,#6a11cb,#2575fc);
+background:linear-gradient(135deg,#5f2c82,#49a09d);
 display:flex;
 justify-content:center;
 align-items:center;
@@ -17,15 +17,15 @@ height:100vh;
 
 .container{
 background:white;
-width:430px;
+width:440px;
 padding:25px;
-border-radius:14px;
-box-shadow:0 15px 40px rgba(0,0,0,0.25);
+border-radius:15px;
+box-shadow:0 15px 40px rgba(0,0,0,0.3);
 max-height:95vh;
 overflow:auto;
 }
 
-h2{text-align:center;margin-bottom:10px;}
+h2{text-align:center;margin-bottom:15px;}
 
 .step{display:none;}
 .step.active{display:block;}
@@ -49,7 +49,7 @@ font-weight:bold;
 .button-group{
 display:flex;
 gap:10px;
-margin-top:10px;
+margin-top:15px;
 }
 
 button{
@@ -61,7 +61,7 @@ font-weight:bold;
 cursor:pointer;
 }
 
-.next{background:#2575fc;color:white;}
+.next{background:#49a09d;color:white;}
 .back{background:#ddd;}
 </style>
 </head>
@@ -89,11 +89,11 @@ cursor:pointer;
 <label>Mobile <span class="required">*</span></label>
 <input id="mobile">
 
-<label>Age <span class="required">*</span></label>
-<input id="age" type="number">
+<label>Date of Birth <span class="required">*</span></label>
+<input id="dob" type="date">
 
 <div class="button-group">
-<button class="next" onclick="nextStep(1)">Next</button>
+<button type="button" class="next" onclick="nextStep(1)">Next</button>
 </div>
 
 </div>
@@ -124,8 +124,8 @@ cursor:pointer;
 </select>
 
 <div class="button-group">
-<button class="back" onclick="prevStep(2)">Back</button>
-<button class="next" onclick="nextStep(2)">Next</button>
+<button type="button" class="back" onclick="prevStep(2)">Back</button>
+<button type="button" class="next" onclick="nextStep(2)">Next</button>
 </div>
 
 </div>
@@ -137,28 +137,28 @@ cursor:pointer;
 <input id="loanAmount" type="number">
 
 <hr>
-
 <h4>Co-Applicant Details (Mandatory)</h4>
 
 <label>Co Applicant Name <span class="required">*</span></label>
 <input id="coName">
 
-<label>Co Applicant Age <span class="required">*</span></label>
-<input id="coAge" type="number">
+<label>Co Applicant Date of Birth <span class="required">*</span></label>
+<input id="coDob" type="date">
 
 <label>Co Applicant Employment <span class="required">*</span></label>
-<select id="coEmployment">
+<select id="coEmployment" onchange="coEmploymentCheck()">
 <option value="">Select</option>
 <option>Salaried</option>
 <option>Self Employed</option>
+<option>House Wife</option>
 </select>
 
 <label>Co Applicant Income (₹) <span class="required">*</span></label>
 <input id="coIncome" type="number">
 
 <div class="button-group">
-<button class="back" onclick="prevStep(3)">Back</button>
-<button class="next" onclick="submitLead()">Submit</button>
+<button type="button" class="back" onclick="prevStep(3)">Back</button>
+<button type="button" class="next" onclick="submitLead()">Submit</button>
 </div>
 
 </div>
@@ -173,29 +173,33 @@ cursor:pointer;
 
 <script>
 
+function calculateAge(dob){
+var diff = Date.now() - new Date(dob).getTime();
+var ageDate = new Date(diff);
+return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
 function nextStep(n){
 
 if(n==1){
+var loanType = document.getElementById("loanType").value;
+var name = document.getElementById("name").value;
+var mobile = document.getElementById("mobile").value;
+var dob = document.getElementById("dob").value;
 
-var loanTypeVal = document.getElementById("loanType").value;
-var nameVal = document.getElementById("name").value;
-var mobileVal = document.getElementById("mobile").value;
-var ageVal = document.getElementById("age").value;
-
-if(loanTypeVal=="" || nameVal=="" || mobileVal=="" || ageVal==""){
+if(loanType=="" || name=="" || mobile=="" || dob==""){
 alert("Please fill all mandatory fields.");
 return;
 }
 }
 
 if(n==2){
+var employment = document.getElementById("employment").value;
+var income = document.getElementById("income").value;
+var emi = document.getElementById("emi").value;
+var cibil = document.getElementById("cibil").value;
 
-var employmentVal = document.getElementById("employment").value;
-var incomeVal = document.getElementById("income").value;
-var emiVal = document.getElementById("emi").value;
-var cibilVal = document.getElementById("cibil").value;
-
-if(employmentVal=="" || incomeVal=="" || emiVal=="" || cibilVal==""){
+if(employment=="" || income=="" || emi=="" || cibil==""){
 alert("Please fill all mandatory fields.");
 return;
 }
@@ -205,9 +209,63 @@ document.getElementById("s"+n).classList.remove("active");
 document.getElementById("s"+(n+1)).classList.add("active");
 }
 
+function prevStep(n){
+document.getElementById("s"+n).classList.remove("active");
+document.getElementById("s"+(n-1)).classList.add("active");
+}
+
+function coEmploymentCheck(){
+var emp = document.getElementById("coEmployment").value;
+if(emp=="House Wife"){
+document.getElementById("coIncome").value=0;
+document.getElementById("coIncome").disabled=true;
+}else{
+document.getElementById("coIncome").disabled=false;
+}
+}
+
+function submitLead(){
+
+var loanAmount = document.getElementById("loanAmount").value;
+var coName = document.getElementById("coName").value;
+var coDob = document.getElementById("coDob").value;
+var coEmployment = document.getElementById("coEmployment").value;
+var coIncome = document.getElementById("coIncome").value;
+
+if(loanAmount=="" || coName=="" || coDob=="" || coEmployment=="" || coIncome==""){
+alert("Please fill all mandatory fields.");
+return;
+}
+
+var age = calculateAge(document.getElementById("dob").value);
+var coAge = calculateAge(coDob);
+
+fetch("PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE",{
+method:"POST",
+body:JSON.stringify({
+loanType:loanType.value,
+name:name.value,
+mobile:mobile.value,
+age:age,
+employment:employment.value,
+income:income.value,
+emi:emi.value,
+cibil:cibil.value,
+loanAmount:loanAmount,
+coName:coName,
+coAge:coAge,
+coEmployment:coEmployment,
+coIncome:coIncome
+})
+})
+.then(()=>{
+document.getElementById("s3").classList.remove("active");
+document.getElementById("thankyou").classList.add("active");
+});
+
+}
 
 </script>
 
 </body>
 </html>
-
